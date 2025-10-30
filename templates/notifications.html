@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Notifications</h2>
+    {% if notifications %}
+    <ul class="list-group mt-3">
+        {% for note in notifications %}
+        <li class="list-group-item">{{ note.message }}</li>
+        {% endfor %}
+    </ul>
+    <form method="POST" action="{{ url_for('clear_notifications') }}" class="mt-3">
+        <button type="submit" class="btn btn-danger">Clear All</button>
+    </form>
+    {% else %}
+    <p class="mt-3 text-muted">No new notifications.</p>
+    {% endif %}
+</div>
+{% endblock %}

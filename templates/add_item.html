@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Add New Item</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Item Name" required>
+        <textarea name="description" placeholder="Description" required></textarea>
+        <input type="number" name="quantity" placeholder="Quantity" required min="1">
+        <input type="number" name="price" placeholder="Price" required min="0">
+        <input type="text" name="location" placeholder="Location (e.g. Ludhiana, Punjab)" required>
+
+        <!-- ✅ New Image Upload Field -->
+        <label for="image">Upload Image:</label>
+        <input type="file" name="image" accept="image/*" required>
+
+        <button type="submit" class="btn btn-success">Add Item</button>
+    </form>
+</div>
+{% endblock %}

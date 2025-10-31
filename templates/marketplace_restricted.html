@@ -17,7 +17,6 @@
                     border-radius: 15px;
                     position: relative;
                  ">
-                <!-- Overlay for readability -->
                 <div style="
                     background: rgba(255, 255, 255, 0.6);
                     position: absolute;
@@ -30,7 +29,7 @@
                     color: white;
                 ">
                     <div>
-                        <h3 class="card-title fw-bold text-white">{{ item.name }}</h3>
+                        <h3 class="card-title fw-bold text-black">{{ item.name }}</h3>
                         <p class="card-text text-black mb-1"><strong>Description:</strong> {{ item.description }}</p>
                         <p class="card-text text-black mb-1"><strong>Quantity:</strong> {{ item.quantity }}</p>
                         <p class="card-text text-black mb-1"><strong>Price (₹):</strong> {{ item.price }}</p>
@@ -38,17 +37,16 @@
                         <p class="card-text text-black mb-1"><strong>Location:</strong> {{ item.location }}</p>
                     </div>
 
-                    <!-- Buy button for restricted users -->
+                    {% if session['role'] in ['ngo', 'buyer'] %}
                     <div>
-                        {% if session['role'] in ['ngo', 'buyer'] %}
                         <form action="{{ url_for('buy_item', item_id=item.id) }}" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-warning btn-sm"
                                     onclick="return confirm('Are you sure you want to order this item?');">
                                 🛒 Buy
                             </button>
                         </form>
-                        {% endif %}
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -59,4 +57,12 @@
         {% endif %}
     </div>
 </div>
+
+<!-- ✅ JS Alert for Purchase -->
+{% if request.args.get('ordered') %}
+<script>
+    alert("✅ Item successfully ordered! You can pick it up from {{ request.args.get('ordered') }}.");
+</script>
+{% endif %}
+
 {% endblock %}

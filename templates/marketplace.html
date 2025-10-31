@@ -88,20 +88,6 @@
     </div>
 </div>
 
-<!-- Flash Messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-        {{ message }}
-
-        
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
 <!-- Items Grid -->
 <div class="row g-4">
     {% for item in items %}
@@ -142,4 +128,12 @@
     <p class="text-center text-muted mt-4">No items listed yet. Add something to get started!</p>
     {% endif %}
 </div>
+
+<!-- ✅ JS Alert for Purchase -->
+{% if request.args.get('ordered') %}
+<script>
+    alert("✅ Item successfully ordered! You can pick it up from {{ request.args.get('ordered') }}.");
+</script>
+{% endif %}
+
 {% endblock %}

@@ -194,7 +194,6 @@ def delete_item(item_id):
 @app.route('/buy_item/<int:item_id>', methods=['POST'])
 def buy_item(item_id):
     if 'user' not in session:
-        
         return redirect(url_for('login'))
 
     data = read_data()
@@ -209,27 +208,25 @@ def buy_item(item_id):
             break
 
     if not item_to_buy:
-        
         return redirect(url_for('marketplace'))
 
     location = item_to_buy.get('location', 'Unknown Location')
 
-    # ✅ Create notification for owner (only for farmers/businesses)
+    # Create notification
     quantity = item_to_buy.get('quantity', 'unknown quantity')
-
     notifications.append({
-    "owner": item_to_buy['owner'],
-    "message": f"{buyer} has ordered {quantity} of {item_to_buy['name']} from {item_to_buy['location']}.",
-    "read": False
+        "owner": item_to_buy['owner'],
+        "message": f"{buyer} has ordered {quantity} of {item_to_buy['name']} from {item_to_buy['location']}.",
+        "read": False
     })
-
     write_notifications(notifications)
 
     # Remove bought item
     data['items'] = [item for item in data['items'] if item['id'] != item_id]
     write_data(data)
 
-    return redirect(url_for('marketplace'))
+    # ✅ Pass a query parameter to trigger alert
+    return redirect(url_for('marketplace', ordered=item_to_buy['location']))
 
 
 # -------------------------- NOTIFICATIONS --------------------------

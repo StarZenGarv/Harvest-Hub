@@ -5,13 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HarvestHub</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.png') }}">
 
-  <!-- Google Font: Poppins -->
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <style>
     /* 🌾 HarvestHub Global Styling */
@@ -20,12 +26,6 @@
       font-family: 'Poppins', sans-serif;
       color: #333;
       overflow-x: hidden;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8fff4;
-      color: #333;
     }
 
     h1,
@@ -41,83 +41,18 @@
     select {
       font-family: 'Poppins', sans-serif;
     }
-    .navbar .container-fluid {
-  padding-left: 40px; /* move entire navbar content slightly left */
-}
-.navbar-brand {
-  margin-left: -20px; /* adjust value as needed */
-}
 
-
-
-    /* --- Top Floating Logout --- */
-    /* --- Fixed Logout Button --- */
-.logout-container {
-  position: fixed;
-  top: 12px;
-  right: 20px;
-  z-index: 2000; /* higher than navbar */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 6px 14px;
-  border-radius: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-}
-
-.logout-container:hover {
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.logout-container span {
-  font-weight: 600;
-  color: #155724;
-}
-
-.logout-container a {
-  text-decoration: none;
-  background: linear-gradient(90deg, #28a745, #218838);
-  color: #fff;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 25px;
-  transition: all 0.3s ease;
-}
-
-.logout-container a:hover {
-  background: linear-gradient(90deg, #218838, #1e7e34);
-  transform: translateY(-2px);
-}
-
-
-
-    .logout-container span {
-      font-weight: 600;
-      color: #155724;
-    }
-
-    .logout-container a {
-      text-decoration: none;
-      background: linear-gradient(90deg, #28a745, #218838);
-      color: #fff;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 25px;
-      transition: all 0.3s ease;
-    }
-
-    .logout-container a:hover {
-      background: linear-gradient(90deg, #218838, #1e7e34);
-      transform: translateY(-2px);
-    }
-
-    /* --- Navbar Styling --- */
+    /* --- Navbar --- */
     .navbar {
       background: linear-gradient(90deg, #2ecc71, #27ae60);
       box-shadow: 0 3px 15px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      margin-right: 120px;
+    }
+
+    .navbar .container-fluid {
+      padding-left: 60px;
+      padding-right: 300px;
     }
 
     .navbar-brand {
@@ -129,7 +64,6 @@
     .nav-link {
       position: relative;
       transition: color 0.3s ease;
-     
     }
 
     .nav-link::after {
@@ -151,61 +85,128 @@
       color: #fff;
     }
 
-    .container {
-      animation: fadeIn 0.6s ease;
-    }
-    .navbar .container-fluid {
-  padding-left: 60px; 
-}
-
-.navbar-brand {
-  margin-left: -10px; 
-}
-.list{
-  width: 100px;
-}
-
-@media (max-width: 992px) {
-  .navbar .container-fluid {
-    padding-left: 20px; /* keep it clean on small screens */
-  }
-}
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+    /* 🌿 Responsive Navbar Items */
+    @media (max-width: 768px) {
+      .navbar-collapse {
+        text-align: left !important;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      .navbar-nav {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px;
+        margin-left: 10px;
+      }
+
+      .navbar-nav .nav-item {
+        width: 100%;
+      }
+
+      .navbar-nav .nav-link {
+        display: block;
+        width: 100%;
+        padding-left: 10px;
       }
     }
-    /* 🌿 Make navbar items align left on small screens */
-@media (max-width: 768px) {
-  .navbar-collapse {
-    text-align: left !important;
-  }
 
-  .navbar-nav {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 10px;
-    margin-left: 10px;
-  }
+    /* --- Logout Button --- */
+    .logout-container {
+      position: fixed;
+      top: 12px;
+      right: 20px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 6px 14px;
+      border-radius: 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+    }
 
-  .navbar-nav .nav-item {
-    width: 100%;
-  }
+    .logout-container:hover {
+      background: rgba(255, 255, 255, 0.95);
+    }
 
-  .navbar-nav .nav-link {
-    display: block;
-    width: 100%;
-    padding-left: 10px;
-  }
-}
+    .logout-container span {
+      font-weight: 600;
+      color: #155724;
+    }
 
+    .logout-container a {
+      text-decoration: none;
+      background: linear-gradient(90deg, #28a745, #218838);
+      color: #fff;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .logout-container a:hover {
+      background: linear-gradient(90deg, #218838, #1e7e34);
+      transform: translateY(-2px);
+    }
+
+    /* 🗺️ Mini Round Map */
+    #mini-map {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 12px;
+      cursor: pointer;
+      border: 2px solid white;
+      transition: all 0.3s ease;
+    }
+
+    #mini-map:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 🌍 Fullscreen Overlay */
+    #map-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 3000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      backdrop-filter: blur(6px);
+    }
+
+    #full-map {
+      width: 90%;
+      height: 80%;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    #close-map-btn {
+      position: absolute;
+      top: 25px;
+      right: 40px;
+      font-weight: 600;
+      border-radius: 25px;
+      padding: 6px 14px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      z-index: 3500;
+    }
+    li{
+      margin-right: -40px;
+    }
+    .list{
+      width: 145px;
+    
+    }
   </style>
 </head>
 
@@ -214,77 +215,64 @@
   <!-- 🌾 Fixed Top Right Logout -->
   {% if 'user' in session %}
   <div class="logout-container">
-    <span>👋 {{ session['user'] }}</span>
+    <span>👋 {{session['user'] }}</span>
     <a href="{{ url_for('logout') }}">Logout</a>
   </div>
   {% endif %}
 
   <!-- 🌿 Navbar -->
-  <!-- 🌿 Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark py-3" style="z-index:1500;">
-  <div class="container-fluid" style="padding-left: 70px; padding-right: 300px;">
- <!-- 👈 Added padding here -->
-    
-    <!-- Brand -->
-    <a class="navbar-brand text-white ms-2" href="/">
-      🌾 HarvestHub
-    </a>
+  <nav class="navbar navbar-expand-lg navbar-dark py-3" style="z-index:1500;">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center">
+        <!-- 🌍 Mini Round Map -->
+        <div id="mini-map"></div>
 
-    <!-- Mobile Toggle -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        <a class="navbar-brand text-white ms-2" href="/">
+          🌾 HarvestHub
+        </a>
+      </div>
 
-    <!-- Links -->
-    <div class="collapse navbar-collapse justify-content-end me-3" id="navbarNav"> <!-- 👈 Slight right margin -->
-     <ul class="navbar-nav d-flex flex-row align-items-center gap-4 mb-0">
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-  <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="/">
-       Home
-    </a>
-  </li>
+      <!-- Links -->
+      <div class="collapse navbar-collapse justify-content-end me-3" id="navbarNav">
+        <ul class="navbar-nav d-flex flex-row align-items-center gap-4 mb-0">
 
-  <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="/marketplace">
-       Marketplace
-    </a>
-  </li>
+          <li class="nav-item">
+            <a class="nav-link text-white fw-semibold" href="/">Home</a>
+          </li>
 
-  {% if session.get('role') not in ['ngo', 'buyer'] %}
-  <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="/add_item">
-       List Food
-    </a>
-  </li>
-  {% endif %}
+          <li class="nav-item">
+            <a class="nav-link text-white fw-semibold" href="/marketplace">Marketplace</a>
+          </li>
 
-  <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="/education">
-      Education
-    </a>
-  </li>
+          {% if session.get('role') not in ['ngo', 'buyer'] %}
+          <li class="nav-item list">
+            <a class="nav-link text-white fw-semibold" href="/add_item">List Food</a>
+          </li>
+          {% endif %}
 
-  <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="/crisis">
-       Crisis Mode
-    </a>
-  </li>
+          <li class="nav-item">
+            <a class="nav-link text-white fw-semibold" href="/education">Education</a>
+          </li>
 
-  {% if session.get('role') in ['farmer', 'business'] %}
-  <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="/notification">
-    Notifications
-    </a>
-  </li>
-  {% endif %}
-</ul>
+          <li class="nav-item list">
+            <a class="nav-link text-white fw-semibold" href="/crisis">Crisis Mode</a>
+          </li>
 
+          {% if session.get('role') in ['farmer', 'business'] %}
+          <li class="nav-item">
+            <a class="nav-link text-white fw-semibold" href="/notification">Notifications</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
-
+  </nav>
 
   <!-- 🌱 Main Content -->
   <div class="container mt-5 pt-3">
@@ -292,7 +280,70 @@
     {% endblock %}
   </div>
 
+  <!-- 🌍 Fullscreen Map Overlay -->
+  <div id="map-overlay">
+    <div id="full-map"></div>
+    <button id="close-map-btn" class="btn btn-danger btn-sm">
+      <i class="bi bi-x-lg"></i> Close
+    </button>
+  </div>
+
+  <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Initialize mini map
+      var miniMap = L.map('mini-map', {
+        zoomControl: false,
+        attributionControl: false
+      }).setView([20.5937, 78.9629], 4.5); // Center on India
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 10,
+      }).addTo(miniMap);
+
+      // Try getting current location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          const { latitude, longitude } = pos.coords;
+          L.marker([latitude, longitude]).addTo(miniMap);
+          miniMap.setView([latitude, longitude], 6);
+        });
+      }
+
+      // Fullscreen map setup
+      const overlay = document.getElementById("map-overlay");
+      const fullMapContainer = document.getElementById("full-map");
+      const closeBtn = document.getElementById("close-map-btn");
+
+      let fullMap; // Full map instance
+
+      document.getElementById("mini-map").addEventListener("click", function () {
+        overlay.style.display = "flex";
+
+        if (!fullMap) {
+          fullMap = L.map('full-map').setView([20.5937, 78.9629], 5);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+          }).addTo(fullMap);
+
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
+              const { latitude, longitude } = pos.coords;
+              L.marker([latitude, longitude]).addTo(fullMap);
+              fullMap.setView([latitude, longitude], 8);
+            });
+          }
+        }
+        setTimeout(() => fullMap.invalidateSize(), 200);
+      });
+
+      closeBtn.addEventListener("click", function () {
+        overlay.style.display = "none";
+      });
+    });
+  </script>
 </body>
 
 </html>
